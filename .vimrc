@@ -8,8 +8,8 @@ unlet g:ctrlp_user_command
 " set your own custom ignore settings
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,tags
 let g:ctrlp_custom_ignore = {
-    \ 'dir':  '\.git$\|\.hg$\|\.svn$\|bower_components$\|build$\|node_modules$\|project_files$\|test$|tags$',
-    \ 'file': '\.out$\|\.so$\|\.dll$\|\.out$|\.o$|tags$' }
+    \ 'dir':  '\.git$\|\.hg$\|\.svn$\|obj$\|bin$\|bower_components$\|build$\|node_modules$\|project_files$\|test$|tags$',
+    \ 'file': '\.out$\|\.so$\|\.dll$\|\.out$|\.o$|\.pdb$|\.cache$|tags$' }
 " clean ctrlp cache
 " CtrlPClearCache
 " rm -rf ~/.cache/ctrlp/
