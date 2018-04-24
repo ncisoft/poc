@@ -1,0 +1,58 @@
+ 1062  dotnet
+ 1064  dotnet cs-etcd.sln 
+ 1065  dotnet sln cs-etcd.sln 
+ 1066  dotnet sln list
+ 1076  dotnet sln
+ 1080  dotnet sln cs-etcd.sln 
+ 1081  dotnet sln cs-etcd.sln list
+ 1082  dotnet build cs-etcd.sln 
+ 1083  dotnet new sln --name asyncdotnet
+ 1085  /opt/donet/dotnet new sln --name asyncdotnet
+ 1087  apt search dotnet
+ 1092  sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/dotnetdev.list'
+ 1093  sudo vim /etc/apt/sources.list.d/dotnetdev.list
+ 1095  sudo vim /etc/apt/sources.list.d/dotnetdev.list
+ 1097  sudo vim /etc/apt/sources.list.d/dotnetdev.list
+ 1099  apt search dotnet
+ 1101  sudo apt install dotnet-sdk-2.1.4
+ 1102  rm ~/bin/dotnet 
+ 1103  dotnet new sln --name asyncdotnet
+ 1104  dotnet new sln build cs-etcd.sln 
+ 1105  dotnet dotnet new console --name 
+ 1108  dotnet dotnet new console --name asyncdotnet --output asyncdotnet
+ 1109  dotnet new console --name asyncdotnet --output asyncdotnet
+ 1112  dotnet sln add src/cs-etcd.csproj 
+ 1114  dotnet sln add src/cs-etcd.csproj 
+ 1115  mv src/cs-etcd.csproj src/asyncdotnet.csproj 
+ 1116  dotnet sln asyncdotnet add src/cs-etcd.csproj 
+ 1117  dotnet sln asyncdotnet add src/asyncdotnet.csproj 
+ 1120  dotnet sln asyncdotnet.sln add src/asyncdotnet.csproj 
+ 1121  dotnet build asyncdotnet.sln 
+ 1122  dotnet restore
+ 1125  dotnet restore
+ 1126  dotnet build asyncdotnet.sln 
+ 1520  curl-socks5-10815 -LO https://download.microsoft.com/download/D/7/2/D725E47F-A4F1-4285-8935-A91AE2FCC06A/dotnet-sdk-2.0.3-linux-x64.tar.gz
+ 1529  scp dotnet-sdk-2.0.3-linux-x64.tar.gz vbox-lan:./distfiles/
+ 1534  tar zxf ../dotnet-sdk-2.0.3-linux-x64.tar.gz 
+ 1540  ./dotnet
+ 1541  ./dotnet -h
+ 1544  ln -s /opt/donet/dotnet 
+ 1545  dotnet
+ 1546  dotnet -h
+ 1633  dotnet build asyncdotnet.sln 
+ 1635  dotnet msbuild
+ 1638  dotnet msbuild
+ 1642  dotnet new sln --name async
+ 1643  dotnet new console --name Async --output Async
+ 1647  dotnet new console --name Async --output async
+ 1654  dotnet new sln --name async
+ 1655  dotnet new console --name async --output src
+ 1659  dotnet restore
+ 1660  dotnet msbuild
+ 1665  dotnet build async.sln 
+ 1669  dotnet restore
+ 1673  dotnet sln add src3/async.csproj 
+ 1674* dotnet rbu
+ 1675  dotnet build async.sln 
+ 1676  dotnet run -p src3/async.csproj 
+ 1678  dotnet run -p src/async.csproj 

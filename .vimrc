@@ -49,3 +49,7 @@ let g:clang_use_library=1
 let g:diminactive_use_colorcolumn = 0
 let g:ctrlp_clear_cache_on_exit = 1
 let g:tagbar_ctags_bin = "ctags"
+
+source ~/conf/vim/.coding.style.vimrc
+nmap <leader>tr :CtrlPClearCache<CR>
+nmap <leader>tm :LeaderfFunction<CR>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
+    <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath> 
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Foo.cs" />
+    <Compile Include="utils.cs" />
+    <Compile Include="tcp-server.cs" />
+    <Compile Include="worker-pingserver.cs" />
+    <Compile Include="iworker.cs" />
+    <Compile Include="hex.cs" />
+  </ItemGroup>
+
+
+</Project>

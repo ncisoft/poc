@@ -1,14 +1,29 @@
-.PHONY: all run r build
+.PHONY: all run r build clean
 
 
 include ~/conf/make/rules.mk
 
 exe=./cs-etcd/bin/Debug/cs-etcd.exe
-msbuild := $(shell which msbuild || which xbuild)
+ifdef RT
+msbuild := $(shell which ${RT})
+else
+msbuild := $(shell which dotnet || which msbuild || which xbuild)
+endif
+
+xdotnet := $(shell which dotnet || echo "...dotnet")
+xmsbuild := $(shell which msbuild || echo "...msbuild")
+xxbuild := $(shell which xbuild || echo "...xbuild")
 
 all: .build
 
 .build: .phony_target
+	@echo $(msbuild)
+ifeq ($(msbuild), $(xdotnet))
+	find . -name "*.dll" -exec rm {} \;
+	dotnet build
+	find . -name "*.dll" -exec cp {} $@ \;
+	test -f $@ && truncate -s 0 $@
+else
 
 	test -f ${exe} && rm ${exe} || echo ""
 	${msbuild} cs-etcd.sln /maxcpucount /p:Configuration=Debug;TargetFrameworkVersion=v4.5.1
@@ -18,8 +33,17 @@ all: .build
 	chmod +x ${exe}
 
 	touch $@
+endif
 
 run: .build r
 
 r: 
+ifeq ($(msbuild), $(xdotnet))
+	dotnet run -p src/async.csproj 
+else
 	mono  --debug=casts ./cs-etcd/bin/Debug/cs-etcd.exe major=marksweep-par-fixed,major-heap-size=2g
+endif
+
+clean:
+	dotnet msbuild ./src/asyncdotnet.csproj  /t:clean
+	rm .build
