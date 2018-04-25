@@ -20,7 +20,8 @@ all: .build
 	@echo $(msbuild)
 ifeq ($(msbuild), $(xdotnet))
 	find . -name "*.dll" -exec rm {} \;
-	dotnet build
+#	dotnet build
+	dotnet build /p:Configuration=Debug;TargetFrameworkVersion=v4.6.1
 	find . -name "*.dll" -exec cp {} $@ \;
 	test -f $@ && truncate -s 0 $@
 else
@@ -45,5 +46,5 @@ else
 endif
 
 clean:
-	dotnet msbuild ./src/asyncdotnet.csproj  /t:clean
-	rm .build
+	dotnet msbuild ./src/async.csproj  /t:clean
+	rm .build .phony_target
