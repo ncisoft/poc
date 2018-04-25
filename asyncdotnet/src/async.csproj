@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
     <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath> 
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
