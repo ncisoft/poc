@@ -17,6 +17,7 @@ namespace csetcd
     {
       private const int port=80;
       private const string _host="192.168.11.1";
+      private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
       public Foo()
         {
@@ -30,28 +31,28 @@ namespace csetcd
       Task Test1()
         {
           Thread.Sleep(1000);
-          log_debug("create task in test1, will run Task as below");
+          _logger.Debug("create task in test1, will run Task as below");
 
           return Task.Run(() =>
                           {
                           Thread.Sleep(1000);
-                          log_debug("Task.Run() Test1");
+                          _logger.Debug("Task.Run() Test1");
                           });
         }
       async void loadAsync()
         {
           await Test1();
-          log_debug("run loadAsync");
+          _logger.Debug("run loadAsync");
         }
       public void run()
         {
-          log_debug("mono current GC Plan = {0}\n", Utils.getGC_Plan());
+          _logger.Debug("mono current GC Plan = {0}\n", Utils.getGC_Plan());
 
-          log_debug("start run()...");
+          _logger.Debug("start run()...");
           loadAsync();
-          log_debug("out of async func, will sleep 3s");
+          _logger.Debug("out of async func, will sleep 3s");
           Thread.Sleep(3000);
-          log_debug("run here, done sleep 3s");
+          _logger.Debug("run here, done sleep 3s");
         }
       public void check()
       {

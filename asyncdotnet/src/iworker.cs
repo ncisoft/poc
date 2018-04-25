@@ -13,7 +13,7 @@ namespace csetcd
 {
   public interface IWorker
     {
-      void process(TcpServer tcpServer, TcpClient client);
+      void process(TcpServer tcpServer, TcpClient client, CancellationToken _ct);
       IWorker newInstance();
     }
 }

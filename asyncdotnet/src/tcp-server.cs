@@ -12,14 +12,15 @@ using  System.Diagnostics;
 namespace csetcd
 {
   using static Utils;
+  using static MicroControllUnit ;
 
   public class TcpServer
     {
 #region fields
       TcpListener _listener=null;   
       IWorker _worker = null; 
-      private CancellationToken _ct;
-      private CancellationTokenSource _cts = new CancellationTokenSource();
+      private CancellationToken _ct = _getCancellationToken();
+      private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 #endregion
 
       void reusePort()
@@ -32,15 +33,15 @@ namespace csetcd
           try
             {
               _worker = worker;
-              _ct = _cts.Token;
+              _ct = _getCancellationToken();
               IPAddress serverAddr = IPAddress.Parse(host);
               _listener = new TcpListener(serverAddr, port);
               _listener.Start();
-              log_info("BeginAcceptTcpClient {0}:{1}", host, port);
+              _logger.Info("BeginAcceptTcpClient {0}:{1}", host, port);
               _listener.BeginAcceptTcpClient(
                                             new AsyncCallback(doAcceptListner), 
                                             _listener);
-              log_info("BeginAcceptTcpClient...");
+              _logger.Info("BeginAcceptTcpClient...");
               Console.WriteLine("To quit, press eny key.");
               myReadKey();
 	      stop();
@@ -49,7 +50,7 @@ namespace csetcd
             {
               //if (!ShouldThrow(ex))
                 {
-                  log_info(ex.Message);
+                  _logger.Info(ex.Message);
                 }
               // else throw;
               throw;
@@ -63,7 +64,7 @@ namespace csetcd
           while (!_ct.IsCancellationRequested)
             {
               bool read = task.Wait(1000);
-	      if (read) log_info("recv key");
+	      if (read) _logger.Info("recv key");
               if (read) return task.Result;
             }
           return null;
@@ -72,11 +73,11 @@ namespace csetcd
         {
           if(_ct.IsCancellationRequested)
             return;
-          _cts.Cancel();
+          _cancelMicroControllUnit();
           //Waits a little, to guarantee that all operation receive information about cancellation.
           Thread.Sleep(100);
           _listener.Stop();
-	  log_info("stop()..");
+	  _logger.Info("stop()..");
 
         }
 
@@ -86,11 +87,11 @@ namespace csetcd
             return;
           TcpListener listener = (TcpListener) ar.AsyncState;
           TcpClient client = listener.EndAcceptTcpClient(ar);
-          log_info("incoming client");
+          _logger.Info("incoming client");
           //Starts waiting for the next request.
           listener.BeginAcceptTcpClient(doAcceptListner, listener);
           IWorker worker = _worker.newInstance();
-          worker.process(this, client);
+          worker.process(this, client, _ct);
         }
     }
 

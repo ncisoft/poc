@@ -53,3 +53,5 @@ let g:tagbar_ctags_bin = "ctags"
 source ~/conf/vim/.coding.style.vimrc
 nmap <leader>tr :CtrlPClearCache<CR>
 nmap <leader>tm :LeaderfFunction<CR>
+
+autocmd BufNewFile,BufRead nlog.config   set syntax=html
