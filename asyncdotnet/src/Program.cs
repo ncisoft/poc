@@ -16,8 +16,6 @@ namespace csetcd
         {
 
           try{
-	Console.WriteLine("totalMemory={0:#,##0}\n    ", GC.GetTotalMemory(false));
-	Console.WriteLine("totalMemory={0}\n    ", GC.GetTotalMemory(false).ToString("#,##0", new CultureInfo("en-US")) );
               Foo foo = new Foo();
               IWorker worker = new RedisWorker(); 
               TcpServer server = new TcpServer();
