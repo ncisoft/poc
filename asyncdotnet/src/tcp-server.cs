@@ -12,7 +12,7 @@ using  System.Diagnostics;
 namespace csetcd
 {
   using static Utils;
-  using static MicroControllUnit ;
+  using static UniversalControllUnit ;
 
   public class TcpServer
     {
@@ -73,7 +73,7 @@ namespace csetcd
         {
           if(_ct.IsCancellationRequested)
             return;
-          _cancelMicroControllUnit();
+          _cancelUniversalControllUnit();
           //Waits a little, to guarantee that all operation receive information about cancellation.
           Thread.Sleep(100);
           _listener.Stop();

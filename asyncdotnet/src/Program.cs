@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using static csetcd.Utils;
-using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 
 namespace csetcd
@@ -11,17 +11,15 @@ namespace csetcd
       private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
       public static void check()
         {
-              ILogger log = getLogger(typeof(MainClass));
-              log.LogTrace(20, "Doing hard work! {Action}", "xxx");
-              log.LogTrace(20, "Doing hard work! ", "xxx");
-              log.LogTrace("Doing hard work! ", "xxx");
         }
       public static void Main(string[] args)
         {
 
           try{
+	Console.WriteLine("totalMemory={0:#,##0}\n    ", GC.GetTotalMemory(false));
+	Console.WriteLine("totalMemory={0}\n    ", GC.GetTotalMemory(false).ToString("#,##0", new CultureInfo("en-US")) );
               Foo foo = new Foo();
-              IWorker worker = new Worker(); 
+              IWorker worker = new RedisWorker(); 
               TcpServer server = new TcpServer();
               //GC.TryStartNoGCRegion(1024*1024*1024);
               server.start(worker, "127.0.0.1", 3333);

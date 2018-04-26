@@ -47,4 +47,4 @@ endif
 
 clean:
 	dotnet msbuild ./src/async.csproj  /t:clean
-	rm .build .phony_target
+	rm  -rf .build .phony_target src/obj src/bin

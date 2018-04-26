@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System.IO;
 using NLog.Config;
+using System.Globalization;
 
 
 namespace csetcd
@@ -55,7 +56,7 @@ namespace csetcd
               sbuf.Append(args[2*i]);
               _args[i] = args[2*i + 1];
             }
-          return String.Format(sbuf.ToString(), _args);
+          return String.Format(CultureInfo.InvariantCulture, sbuf.ToString(), _args);
         }
       public static void println()
         {

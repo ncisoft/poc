@@ -20,7 +20,7 @@
     <Compile Include="Foo.cs" />
     <Compile Include="utils.cs" />
     <Compile Include="tcp-server.cs" />
-    <Compile Include="worker-pingserver.cs" />
+    <Compile Include="worker-redis-server.cs" />
     <Compile Include="iworker.cs" />
     <Compile Include="hex.cs" />
     <Compile Include="mcu.cs" />
