@@ -117,11 +117,11 @@ namespace csetcd
     async Task meth_gcstatus()
       {
         string msg = string_format("+OK gc.status \n    ",
-                                   "MaxGeneration={0}, ", GC.MaxGeneration,
+                                   "maxGeneration={0}, ", GC.MaxGeneration,
                                    "totalMemory={1:N0}\n    ", GC.GetTotalMemory(false),
-                                   "CollectionCount[0]={2}, ", GC.CollectionCount(0),
-                                   "CollectionCount[1]={3}, ", GC.CollectionCount(1),
-                                   "CollectionCount[2]={4}\n\n ", GC.CollectionCount(2)
+                                   "collectionCount[0]={2}\n    ", GC.CollectionCount(0),
+                                   "collectionCount[1]={3}\n    ", GC.CollectionCount(1),
+                                   "collectionCount[2]={4}\n\n ", GC.CollectionCount(2)
         );
 
         byte[] bs = System.Text.Encoding.Default.GetBytes(msg);
@@ -131,11 +131,11 @@ namespace csetcd
     async Task meth_gccollect()
       {
         string msg = string_format("+OK gc.status before\n    ",
-                                   "MaxGeneration={0}, ", GC.MaxGeneration,
+                                   "maxGeneration={0}, ", GC.MaxGeneration,
                                    "totalMemory={1:N0}\n    ", GC.GetTotalMemory(false),
-                                   "CollectionCount[0]={2}, ", GC.CollectionCount(0),
-                                   "CollectionCount[1]={3}, ", GC.CollectionCount(1),
-                                   "CollectionCount[2]={4}\n\n ", GC.CollectionCount(2)
+                                   "collectionCount[0]={2} \n    ", GC.CollectionCount(0),
+                                   "collectionCount[1]={3} \n   ", GC.CollectionCount(1),
+                                   "collectionCount[2]={4}\n\n ", GC.CollectionCount(2)
         );
 
         byte[] bs = System.Text.Encoding.Default.GetBytes(msg);
