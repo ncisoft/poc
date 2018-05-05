@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
+    <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath> 
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0" />
+    <PackageReference Include="NLog" Version="4.5.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Compile Include="./dynamic-proxy/IProxyInvocationHandler.cs" />
+	  <Compile Include="./dynamic-proxy/MetaDataFactorycs.cs" />
+	  <Compile Include="./dynamic-proxy/ProxyFactorycs.cs" />
+	  <Compile Include="./dynamic-proxy/SecurityManager.cs" />
+	  <Compile Include="./dynamic-proxy/SecurityProxy.cs" />
+	  <Compile Include="./dynamic-proxy/utils.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Foo.cs" />
+    <Compile Include="./mcsp.cs" />
+  </ItemGroup>
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="nlog.config" DestinationFolder="$(OutDir)" />
+  </Target>
+</Project>
