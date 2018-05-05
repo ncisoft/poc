@@ -21,7 +21,7 @@ all: .build
 ifeq ($(msbuild), $(xdotnet))
 	find . -name "*.dll" -exec rm {} \;
 #	dotnet build
-	dotnet build /p:Configuration=Debug;TargetFrameworkVersion=v4.6.1
+	dotnet build /p:Configuration=Debug;TargetFrameworkVersion=v4.5.1
 	find . -name "*.dll" -exec cp {} $@ \;
 	test -f $@ && truncate -s 0 $@
 else
