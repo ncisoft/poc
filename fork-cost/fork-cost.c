@@ -60,10 +60,12 @@ void child_trap(int sig)
   printf("%u child_trap\n", get_us());
 }
 
+static int child_signal = 0;
 void parent_trap(int sig) 
 {
   printf("%u parent_trap, child is alive\n", get_us());
   sleep(0);
+  child_signal = 1;
 }
 
 int main()
@@ -72,6 +74,7 @@ int main()
   printf("%u init done, CLOCKS_PER_SEC=%u\n", get_us(), (u_int32_t)CLOCKS_PER_SEC);
   for (int i=0; i < 25; i++) //800 MB
     _xmalloc32M();
+
   usleep(100);
   printf("%u malloc 800-MB done\n\n", get_us());
     {
@@ -98,7 +101,10 @@ int main()
         {
           //parent, xpid is pid of child process
           printf("%u parent is running\n", get_us());
-          usleep(100);
+          while (!child_signal)
+            {
+              usleep(100);
+            }
           printf("%u parent is going to die\n", get_us());
           usleep(100);
         }
