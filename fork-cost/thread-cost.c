@@ -15,6 +15,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <pthread.h>
 
 union
 {
@@ -68,48 +69,44 @@ void parent_trap(int sig)
   child_signal = 1;
 }
 
+void* child_main(void *uhd)
+{
+  printf("\t%u child is running\n", get_us());
+  printf("\t%u child is going to die\n", get_us());
+  child_signal = 1;
+  return NULL;
+}
+
 #define N 4
+
 int main()
 {
-  printf("fork-cost ...\n");
+  pthread_t main_tid;
+  printf("thread-cost ...\n");
   init();
-  printf("%u init done, CLOCKS_PER_SEC=%u\n", get_us(), (u_int32_t)CLOCKS_PER_SEC);
-  for (int i=0; i < 25; i++) //800 MB
+  printf("\n%u init done, CLOCKS_PER_SEC=%u, below time unit is microseconds\n", get_us(), (u_int32_t)CLOCKS_PER_SEC);
+  for (int i=0; i < N; i++) //800 MB
     _xmalloc32M();
 
   usleep(100);
   printf("%u malloc %d MB done\n\n", N*32, get_us());
     {
-      pid_t parent_pid, xpid;
-      signal(SIGCHLD,SIG_IGN);
-      signal(SIGUSR1, parent_trap);
+      printf("\t%u ready to pthread_create\n", get_us());
+      int err = pthread_create(&main_tid, NULL, child_main, NULL); 
+      if (err != 0)
+        {
+          printf("%u create child thread fail\n", get_us());
+          return 1;
 
-      parent_pid = getpid();
-      printf("\t %u ready to fork\n", get_us());
-      xpid = fork();
-      if (xpid < 0)
-        {
-          printf("fork error\n");
-          exit(-1);
         }
-      else if (xpid == 0)
+      //parent, xpid is pid of child process
+      printf("%u parent is running\n", get_us());
+      while (!child_signal)
         {
-          printf("\t %u child is running\n", get_us());
-          kill(parent_pid, SIGUSR1);
-          printf("\t %u child is going to die\n", get_us());
-          // child();
-        }
-      else
-        {
-          //parent, xpid is pid of child process
-          printf("%u parent is running\n", get_us());
-          while (!child_signal)
-            {
-              usleep(100);
-            }
-          printf("%u parent is going to die\n", get_us());
           usleep(100);
         }
+      printf("%u parent is going to die\n", get_us());
+      usleep(100);
     }
   return 0;
 }
