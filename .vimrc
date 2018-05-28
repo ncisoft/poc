@@ -1,5 +1,5 @@
 "let g:EasyGrepFilesToExclude = "*.bak,*~,cscope.*,*.a,*.o,*.pyc,*.bak,*.c, build/*,tags"
-let g:EasyGrepFilesToExclude=".git,build,tags,*.bak,*.o,*.s"
+let g:EasyGrepFilesToExclude=".git,build,tags,*.bak,*.o,*.s,*.exe"
 let g:EasyGrepRoot = "search:.git"
 set wildignore=*.swp,.gitignore
 "https://gist.github.com/seyDoggy/613f2648cebc6c7b456f
