@@ -34,11 +34,12 @@ extern "C"
 #define STD_LOGLEVEL_ERROR       4
 #define STD_LOGLEVEL_FATAL       4
 
+static inline char *shorternFilename(const char *fname);
 #define STD_LOG(LEVEL, logstr, color, __fmt, ...)       if (LEVEL <= __std_log_level)  {   \
   if (STD_LOG_BRIEF) \
-  fprintf(stdout, color "%s:%d\t%s\t", __FILE__,  __LINE__, logstr); \
+  fprintf(stdout, color "%s:%d\t%s\t", shorternFilename(__FILE__),  __LINE__, logstr); \
   else \
-  fprintf(stdout, color "%s:%s:%d\t%s\t", __FILE__,   __FUNCTION__,__LINE__, logstr); \
+  fprintf(stdout, color "%s:%s:%d\t%s\t", shorternFilename(__FILE__),   __FUNCTION__,__LINE__, logstr); \
   fprintf(stdout, __fmt, ##__VA_ARGS__); \
   fprintf(stdout, __C_RESET__ ); \
 }
@@ -75,6 +76,11 @@ static inline void std_print_stacktrace(const char *fname, int lineno)
 }
 
 
+static inline char *shorternFilename(const char *fname)
+{
+ char *cp = strrchr(fname, '/');
+ return (!cp) ? (char *)fname : cp + 1; 
+}
 #ifdef __cplusplus
 }
 #endif

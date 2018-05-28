@@ -28,7 +28,7 @@ int main()
 }
 int lua_gcs_hook_host_(lua_State *L)
 {
-  std_info("hooked here\n");
+  std_info("function call hooked here\n");
   return 0;
 }
 
@@ -65,7 +65,21 @@ int lua_gcs_hook_host(lua_State *L)
     }
   std_debug("top=%d\n", lua_gettop(L));
   std_assert( lua_gettop(L) == 1 );
+  std_info("is table %d\n", lua_istable(L, -1));
+  lua_getfield(L, -1, "gethook");
+    {
+      int rc = lua_pcall(L, 0, 3,  0);
+      if (rc)
+        {
+          char buf[128];
+          sprintf(buf, "pcall error: %d\n", rc);
+          panic(-1, buf);
+        }
+      std_debug("%p %p\n", lua_topointer(L, -3), &lua_gcs_hook_host_);
+      lua_pop(L, 3);
+      std_debug("top=%d\n", lua_gettop(L));
 
+    }
   lua_pop(L, 1);
   //  printf("top=%d\n", lua_gettop(L));
   //    printf("hook_call done\n");
