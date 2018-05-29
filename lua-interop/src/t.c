@@ -6,7 +6,6 @@
 #include "log.h"
 
 int lua_gcs_hook_host(lua_State *L);
-int lua_gcs_hook_host_(lua_State *L, lua_Debug *ar);
 
 int __std_log_level= STD_LOGLEVEL_DEBUG;
 
@@ -26,23 +25,23 @@ int main()
   lua_close(L);
   return 0;
 }
-int lua_gcs_hook_host_(lua_State *L, lua_Debug *ar)
+void lua_gcs_hook_host_(lua_State *L, lua_Debug *ar)
 {
   std_info("function call hooked here\n");
-  return 0;
 }
 
+#if 0
 static void panic(int exit_code, const char *msg)
 {
     fprintf(stderr, "%s\n", msg);
       _exit(exit_code);
-
 }
+#endif
 
 int lua_gcs_hook_host(lua_State *L)
 {
   std_debug("hook here\n");
-  lua_sethook(L, lua_gcs_hook_host_, LUA_MASKCALL, 0);
+  lua_sethook(L, &lua_gcs_hook_host_, LUA_MASKCALL, 0);
   std_debug("%p %p %d %d\n", lua_gethook(L), &lua_gcs_hook_host_, lua_gethookmask(L), lua_gethookcount(L)
 		  );
   return 0;

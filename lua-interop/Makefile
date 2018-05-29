@@ -9,6 +9,7 @@ LDFLAGS=-L${lua_libdir} -llua -lm -Wl,-E -ldl -lreadline
 
 build: .init1
 	make -C src \
+		CC="${CC}" \
 		CFLAGS="${CFLAGS}" \
 		LDFLAGS="${LDFLAGS}" \
 		build
@@ -19,6 +20,7 @@ xbuild: .init1
 		CFLAGS="${CFLAGS}" \
 		LDFLAGS="${LDFLAGS}" \
 		build
+	ctags src/*.[hc]
 
 .init1: .init0
 	touch $@
