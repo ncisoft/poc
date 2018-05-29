@@ -6,7 +6,7 @@
 #include "log.h"
 
 int lua_gcs_hook_host(lua_State *L);
-int lua_gcs_hook_host_(lua_State *L);
+int lua_gcs_hook_host_(lua_State *L, lua_Debug *ar);
 
 int __std_log_level= STD_LOGLEVEL_DEBUG;
 
@@ -26,7 +26,7 @@ int main()
   lua_close(L);
   return 0;
 }
-int lua_gcs_hook_host_(lua_State *L)
+int lua_gcs_hook_host_(lua_State *L, lua_Debug *ar)
 {
   std_info("function call hooked here\n");
   return 0;
@@ -42,47 +42,8 @@ static void panic(int exit_code, const char *msg)
 int lua_gcs_hook_host(lua_State *L)
 {
   std_debug("hook here\n");
-  std_debug("top=%d\n", lua_gettop(L));
-  lua_getglobal(L, "debug");
-  if (!lua_istable(L, -1))
-    panic(-1, "get debug failure\n");
-  lua_getfield(L, -1, "sethook");
-  if (!lua_isfunction(L, -1))
-    panic(-1, "load debug.hook failure\n");
-  std_debug("top=%d\n", lua_gettop(L));
-  lua_pushcfunction(L, &lua_gcs_hook_host_);
-  lua_pushstring(L, "c");
-    {
-      int rc = lua_pcall(L, 2, 0,  0);
-      if (rc)
-        {
-          char buf[128];
-          sprintf(buf, "pcall error: %d\n", rc);
-        panic(-1, buf);
-
-        }
-
-    }
-  std_debug("top=%d\n", lua_gettop(L));
-  std_assert( lua_gettop(L) == 1 );
-  std_info("is table %d\n", lua_istable(L, -1));
-  lua_getfield(L, -1, "gethook");
-    {
-      int rc = lua_pcall(L, 0, 3,  0);
-      if (rc)
-        {
-          char buf[128];
-          sprintf(buf, "pcall error: %d\n", rc);
-          panic(-1, buf);
-        }
-      std_debug("%p %p\n", lua_topointer(L, -3), &lua_gcs_hook_host_);
-      lua_pop(L, 3);
-      std_debug("top=%d\n", lua_gettop(L));
-
-    }
-  lua_pop(L, 1);
-  //  printf("top=%d\n", lua_gettop(L));
-  //    printf("hook_call done\n");
-  //     
+  lua_sethook(L, lua_gcs_hook_host_, LUA_MASKCALL, 0);
+  std_debug("%p %p %d %d\n", lua_gethook(L), &lua_gcs_hook_host_, lua_gethookmask(L), lua_gethookcount(L)
+		  );
   return 0;
 }
