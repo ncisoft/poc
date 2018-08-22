@@ -40,7 +40,9 @@ t.lua
 
 .phony_target
 .build
-*/src/obj/*
-*/src/bin/*
+*/obj/*
+*/bin/*
 */build/*
 */.vs/*
+/staticblock-poc/target/
+/unity-classes/target/
