@@ -8,6 +8,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.IO;
 
 namespace csetcd
 {
@@ -25,6 +26,7 @@ namespace csetcd
     static readonly byte[] _bsOut = System.Text.Encoding.Default.GetBytes("+PONG\r\n");
     static readonly byte[] _bsExit = System.Text.Encoding.Default.GetBytes("+OK exit\r\n");
 #endregion
+    ConcurrentDictionary<int, bool> _mThreadSet = new ConcurrentDictionary<int, bool>();
 
     public RedisWorker()
       {
@@ -121,9 +123,11 @@ namespace csetcd
                                    "totalMemory={1:N0}\n    ", GC.GetTotalMemory(false),
                                    "collectionCount[0]={2}\n    ", GC.CollectionCount(0),
                                    "collectionCount[1]={3}\n    ", GC.CollectionCount(1),
-                                   "collectionCount[2]={4}\n\n ", GC.CollectionCount(2)
+                                   "collectionCount[2]={4}\n    ", GC.CollectionCount(2),
+                                   "max_thread_count={5}\n\n",   _mThreadSet.Count
         );
-
+        // reset _mThreadSet
+        _mThreadSet = new ConcurrentDictionary<int, bool>();
         byte[] bs = System.Text.Encoding.Default.GetBytes(msg);
         await _stream.WriteAsync(bs, 0, bs.Length);
         close();
@@ -160,6 +164,7 @@ namespace csetcd
                     byte[] bs2 = System.Text.Encoding.Default.GetBytes(str);
                     dump_bs("dump incoming msg", bs2, bs2.Length);
                     _logger.Warn("incoming cmd={0} , Length={1},{2}",  str, nRead, str.Length);
+                    _mThreadSet.TryAdd(Thread.GetCurrentProcessorId(), true);
                     switch (str.ToLower())
                       {
                       case "ping":
