@@ -30,7 +30,7 @@ namespace cs_test
 		public Foo()
 		{
 		}
-		void println(string msg )
+		void println (string msg )
 		{
 			StackFrame callStack = new StackFrame(1, true);
 			string _msg = "" + callStack.GetMethod() + ":" + callStack.GetFileLineNumber() + " " + msg;
