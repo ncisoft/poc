@@ -53,9 +53,11 @@ endif
 
 clean:
 ifeq ($(msbuild), $(xdotnet))
+	rm  -rf .build .phony_target src/obj src/bin
 	dotnet msbuild asyncdotnet.sln   /t:clean
-	rm  -rf .build .phony_target src/obj src/bin
+	dotnet msbuild asyncdotnet.sln   /r
 else
-	${msbuild} asyncdotnet-mono.sln /t:clean
 	rm  -rf .build .phony_target src/obj src/bin
+	${msbuild} asyncdotnet-mono.sln /t:clean
+	${msbuild} asyncdotnet-mono.sln /r
 endif

@@ -40,6 +40,7 @@ t.lua
 
 .phony_target
 .build
+.realsync
 */src/obj/*
 */src/bin/*
 */build/*
