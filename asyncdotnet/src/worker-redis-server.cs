@@ -39,23 +39,31 @@ namespace csetcd
 		}
 		
 		
-		void IWorker.process(TcpServer tcpServer, TcpClient client, CancellationToken ct)
-		{
-			try {
-				_tcpServer = tcpServer;
-				_client = client;
-				_stream = _client.GetStream();
-				_ct = ct;
-				_stream.ReadTimeout = 1000;
-				_bs = _bs ?? new byte[BUF_SIZE];
-
-				_process();
-			}
-			catch (Exception ex)
+			void IWorker.process(TcpServer tcpServer, TcpClient client, CancellationToken ct)
 			{
-				_logger.Debug(ex.Message);
+				try {
+					_tcpServer = tcpServer;
+					_client = client;
+					_stream = _client.GetStream();
+					_ct = ct;
+					_stream.ReadTimeout = 1000;
+					_bs = _bs ?? new byte[BUF_SIZE];
+	
+				//Console.WriteLine("before");	
+					_processAsyncWrapper();
+					//Console.WriteLine("after");	
+				}
+				catch (Exception ex)
+				{
+					_logger.Debug(ex.Message);
+				}
 			}
+
+		async void _processAsyncWrapper()
+		{
+			await _processAsync();
 		}
+		
 		string trim(byte[] bs, int length)
 		{
 			int len = length;
@@ -69,24 +77,30 @@ namespace csetcd
 			return System.Text.Encoding.Default.GetString(bs, 0, len);
 		}
 
-		string parse_redis_protocol(byte[] bs, int length)
+		async Task<string> parse_redis_protocol_async(byte[] bs, int length)
 		{
-			int offset = 0;
-			if (bs[0] == '*' && bs[1] == '1')
+			return await Task.Run( () =>
 			{
-				offset += 4;
-				if (bs[offset] == '$')
+				int offset = 0;
+				if (bs[0] == '*' && bs[1] == '1')
 				{
-					int  nbytes = bs[offset+1] - '0';
 					offset += 4;
-					return System.Text.Encoding.Default.GetString(bs, offset, nbytes);
+					if (bs[offset] == '$')
+					{
+						int nbytes = bs[offset + 1] - '0';
+						offset += 4;
+						return System.Text.Encoding.Default.GetString(bs, offset, nbytes);
+					}
 				}
-			}
-			else
-			{
-				return trim(bs, length);
-			}
-			return "unknown";
+				else
+				{
+					return trim(bs, length);
+				}
+
+				return "unknown";
+			//}
+
+				});
 		}
 		void dump_bs(string msg, byte[] ba, int length)
 		{
@@ -96,10 +110,11 @@ namespace csetcd
 			//Console.WriteLine( Hex.Dump(bs) );
 		}
 
-		async Task meth_ping()
+		async Task<bool> meth_ping()
 		{
 			_logger.Debug("received redis ping command");
 			await _stream.WriteAsync(_bsOut, 0, _bsOut.Length);
+			return true;
 		}
 
 		void close()
@@ -112,12 +127,13 @@ namespace csetcd
 			_stream = null;
 			_client = null;
 		}
-		async Task meth_exit()
+		async Task<bool> meth_exit()
 		{
 			await _stream.WriteAsync(_bsExit, 0, _bsOut.Length);
 			_tcpServer.stop();
 			_logger.Fatal("will shutdown");
 			close();
+			return true;
 		}
 
 		int getCurrentThreadId()
@@ -125,7 +141,7 @@ namespace csetcd
 			Thread _thread = Thread.CurrentThread;
 			return (_thread != null) ? _thread.ManagedThreadId : -1;
 		}
-		async Task meth_gcstatus()
+		async Task<bool> meth_gcstatus()
 		{
 			string msg = string_format("+OK gc.status \n    ",
 					"maxGeneration={0}, ", GC.MaxGeneration,
@@ -144,8 +160,9 @@ namespace csetcd
 			byte[] bs = System.Text.Encoding.Default.GetBytes(msg);
 			await _stream.WriteAsync(bs, 0, bs.Length);
 			close();
+			return true;
 		}
-		async Task meth_gccollect()
+		async Task<bool> meth_gccollect()
 		{
 			string msg = string_format("+OK gc.status before\n    ",
 					"maxGeneration={0}, ", GC.MaxGeneration,
@@ -161,24 +178,29 @@ namespace csetcd
 			GC.WaitForPendingFinalizers();
 			GC.Collect();
 			await meth_gcstatus();
+			return true;
 		}
 
-		async void _process()
+		async Task<bool>  _processAsync()
 		{
+			bool _isLoop = true;
+        Stopwatch sw = Stopwatch.StartNew();
 			while (!_ct.IsCancellationRequested && _stream != null)
 			{
+				//Console.WriteLine("Loop once");
 				try
 				{
+					long start = sw.ElapsedMilliseconds;	
 					int nRead = await _stream.ReadAsync(_bs, 0, _bs.Length);
 					if (nRead > 0)
 					{
-						dump_bs("dump incoming msg", _bs, nRead);
-						string str = parse_redis_protocol(_bs, nRead);
-						byte[] bs2 = System.Text.Encoding.Default.GetBytes(str);
-						dump_bs("dump incoming msg", bs2, bs2.Length);
-						_logger.Warn("incoming cmd={0} , Length={1},{2}",  str, nRead, str.Length);
+						//dump_bs("dump incoming msg", _bs, nRead);
+						string strRedisCmd = await parse_redis_protocol_async(_bs, nRead);
+						//byte[] bs2 = System.Text.Encoding.Default.GetBytes(strRedisCmd);
+						//dump_bs("dump incoming msg", bs2, bs2.Length);
+						_logger.Warn("incoming cmd={0} , Length={1},{2}",  strRedisCmd, nRead, strRedisCmd.Length);
 						_mThreadSet.TryAdd(Thread.CurrentThread.ManagedThreadId, true);
-						switch (str.ToLower())
+						switch (strRedisCmd.ToLower())
 						{
 							case "ping":
 								await meth_ping();
@@ -193,23 +215,35 @@ namespace csetcd
 								await meth_exit();
 								break;
 							default:
-								Console.WriteLine("illegal cmd {0}, Length={1}", str, nRead);
+								Console.WriteLine("illegal cmd {0}, Length={1}", strRedisCmd, nRead);
 								break;
 						}
 					}
 					if (!isSocketConnected(_client.Client))
 					{
 						_client.Client.Disconnect(true);
+						_isLoop = false;
+                        //Console.WriteLine("end Loop");
 						break;
 					}
+
+					long now = sw.ElapsedMilliseconds;
+					if ((now - start) >= 10)
+						Console.WriteLine("long call {0} ms, total threads={1}", now-start, Process.GetCurrentProcess().Threads.Count);
 				}
 				catch (Exception ex)
 				{
 					_logger.Info("exception is {0}:{1}", ex.GetType(), ex.Message);
 					this.close();
+                    _isLoop = false;
+					//Console.WriteLine("end Loop-ex");
 					break;
 				}
+				if (!_isLoop)
+					break;
 			}
+
+			return _isLoop;
 		}
 #endregion
 	}

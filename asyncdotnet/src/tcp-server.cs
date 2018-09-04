@@ -30,8 +30,9 @@ namespace csetcd
 
       static int calculateWorkerThreadNum()
         {
-          int num = Math.Max(2, Environment.ProcessorCount) - 2; // leave 1 io thread, 1 benchmark client process
+          int num = Math.Max(2, Environment.ProcessorCount) - 2; // leave 1 io thread, 1 accept io thread, 1 benchmark client process
           num = Math.Max(2, num);
+          num = 2;
           Console.WriteLine("worker thread count={0}", num);
 
           return num;
@@ -79,12 +80,12 @@ namespace csetcd
         Console.WriteLine("starting GC monitor ...");
         while (true)
         {
-          int timeout = 20;
-          int sleep = 10; 
+          int gc_timeout = 10;
+          int sleep = 4; 
           long start = sw.ElapsedMilliseconds;
           Thread.Sleep(sleep);
           long now = sw.ElapsedMilliseconds;
-          if ((now - start) >= (timeout + sleep))
+          if ((now - start) >= (gc_timeout + 0))
           {
             Console.WriteLine( "  GC timeout[{0}]: {1} ms", count++, now-start-sleep );
           }
@@ -103,12 +104,18 @@ namespace csetcd
           Console.WriteLine("fork [{0}] thread, Id={1}", _mpId, Thread.CurrentThread.ManagedThreadId);
           int _count = 0;
           int iConnection = 0;
+          Stopwatch sw = new Stopwatch();
+          long _ElapsedMilliseconds = 0;
           while (true)
             {
               IWorker worker = _worker.newInstance();
               TcpClient client = _mpQueue.Take();
               if (client == null)
                 throw new InvalidDataException("got null data from _mpQueue");
+              long now = sw.ElapsedMilliseconds;
+              if (now >= (_ElapsedMilliseconds + 10))
+                Console.WriteLine("lag: {0} {1}", iConnection, now - _ElapsedMilliseconds);
+              _ElapsedMilliseconds = now;
               if (_mpQueue.Count >= _count + 5)
               {
                 _count = _mpQueue.Count;
@@ -174,17 +181,14 @@ namespace csetcd
         }
 
        static int _mSpareConnectionCount = 0;
-      public void doAcceptListner( IAsyncResult ar )
-        {
-          if(_ct.IsCancellationRequested)
-            return;
-          TcpListener listener = (TcpListener) ar.AsyncState;
-          TcpClient client = listener.EndAcceptTcpClient(ar);
+        Stopwatch swAccept = Stopwatch.StartNew();
+
+      public void processAcceptedClient(TcpClient client)
+      {
           int id = client.Client.RemoteEndPoint.GetHashCode() % _mClientQueueList.Length;
           if (id < 0) id = -id;
           //Console.WriteLine("  id={0}", id);
           //Starts waiting for the next request.
-          listener.BeginAcceptTcpClient(mAcceptCallback, listener);
           {
             var _queue = _mClientQueueList[id];
             if (_queue.Count >= 5)
@@ -192,8 +196,23 @@ namespace csetcd
               _queue = _mSpareClientQueue;
                Console.WriteLine(" move connection to spare worker thread: c-{0} -> {1} from [{2}] worker", ++_mSpareConnectionCount, _queue.Count, id);
             }
+
+            long _start = swAccept.ElapsedMilliseconds;
             _queue.Add(client);
+            long _now = swAccept.ElapsedMilliseconds;
+            if (_now > (_start + 10))
+              Console.WriteLine("blocking queue {0}", _now - _start);
           }
+      }
+      
+      public void doAcceptListner( IAsyncResult ar )
+        {
+          if(_ct.IsCancellationRequested)
+            return;
+          TcpListener listener = (TcpListener) ar.AsyncState;
+          listener.BeginAcceptTcpClient(mAcceptCallback, listener);
+          TcpClient client = listener.EndAcceptTcpClient(ar);
+          processAcceptedClient(client);
           //_logger.Info("incoming client");
         }
     }

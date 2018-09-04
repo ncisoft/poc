@@ -14,9 +14,9 @@ xmsbuild := $(shell which msbuild || echo "...msbuild")
 xxbuild := $(shell which xbuild || echo "...xbuild")
 
 ifeq ($(msbuild), $(xdotnet))
-  exe=./cs-etcd/bin/Debug/cs-etcd.exe
+  exe=./cs-etcd/bin/Release/cs-etcd.exe
 else
-  exe := ./src/bin/Debug/asyncdotnet.exe
+  exe := ./src/bin/Release/asyncdotnet.exe
 endif
 
 all: .build
@@ -26,14 +26,15 @@ all: .build
 ifeq ($(msbuild), $(xdotnet))
 	find . -name "*.dll" -exec rm {} \;
 #	dotnet build
-	dotnet build asyncdotnet.sln /p:Configuration=Debug;TargetFrameworkVersion=v4.6.1
+	dotnet build asyncdotnet.sln /p:Configuration=Release;TargetFrameworkVersion=v4.6.1
 	find . -name "*.dll" -exec cp {} $@ \;
 	test -f $@ && truncate -s 0 $@
 else
 
 	test -f ${exe} && rm ${exe} || echo ""
-	${msbuild} asyncdotnet-mono.sln
-       #	/maxcpucount /p:Configuration=Debug;TargetFrameworkVersion=v4.5.1
+	${msbuild} asyncdotnet-mono.sln /P:Configuration=Release
+
+	#	/maxcpucount /p:Configuration=Debug;TargetFrameworkVersion=v4.5.1 /P:Configuration=Release
 
 	test -f ${exe}
 	#mono  --debug=casts  -O=all --aot ${exe}
