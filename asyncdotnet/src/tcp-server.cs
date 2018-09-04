@@ -31,8 +31,7 @@ namespace csetcd
       static int calculateWorkerThreadNum()
         {
           int num = Math.Max(2, Environment.ProcessorCount) - 2; // leave 1 io thread, 1 accept io thread, 1 benchmark client process
-          num = Math.Max(2, num);
-          num = 2;
+          num = Math.Max(2, num/2);
           Console.WriteLine("worker thread count={0}", num);
 
           return num;

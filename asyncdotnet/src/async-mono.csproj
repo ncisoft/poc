@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
@@ -30,14 +29,13 @@
     <ExternalConsole>true</ExternalConsole>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0" />
     <PackageReference Include="NLog" Version="4.5.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
   </ItemGroup>
-
   <ItemGroup>
+    <Compile Include="latency.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Foo.cs" />
     <Compile Include="utils.cs" />
@@ -47,7 +45,6 @@
     <Compile Include="hex.cs" />
     <Compile Include="mcu.cs" />
   </ItemGroup>
-
   <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
     <Copy SourceFiles="nlog.config" DestinationFolder="$(OutDir)" />
   </Target>
