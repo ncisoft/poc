@@ -3,7 +3,6 @@
 
 include ~/conf/make/rules.mk
 
-exe=./cs-etcd/bin/Debug/cs-etcd.exe
 ifdef RT
 msbuild := $(shell which ${RT})
 else
@@ -14,6 +13,12 @@ xdotnet := $(shell which dotnet || echo "...dotnet")
 xmsbuild := $(shell which msbuild || echo "...msbuild")
 xxbuild := $(shell which xbuild || echo "...xbuild")
 
+ifeq ($(msbuild), $(xdotnet))
+  exe=./cs-etcd/bin/Release/cs-etcd.exe
+else
+  exe := ./src/bin/Release/asyncdotnet.exe
+endif
+
 all: .build
 
 .build: .phony_target
@@ -21,16 +26,18 @@ all: .build
 ifeq ($(msbuild), $(xdotnet))
 	find . -name "*.dll" -exec rm {} \;
 #	dotnet build
-	dotnet build /p:Configuration=Debug;TargetFrameworkVersion=v4.6.1
+	dotnet build asyncdotnet.sln /p:Configuration=Release;TargetFrameworkVersion=v4.6.1
 	find . -name "*.dll" -exec cp {} $@ \;
 	test -f $@ && truncate -s 0 $@
 else
 
 	test -f ${exe} && rm ${exe} || echo ""
-	${msbuild} cs-etcd.sln /maxcpucount /p:Configuration=Debug;TargetFrameworkVersion=v4.5.1
+	${msbuild} asyncdotnet-mono.sln /P:Configuration=Release
+
+	#	/maxcpucount /p:Configuration=Debug;TargetFrameworkVersion=v4.5.1 /P:Configuration=Release
 
 	test -f ${exe}
-	mono  --debug=casts  -O=all --aot ${exe}
+	#mono  --debug=casts  -O=all --aot ${exe}
 	chmod +x ${exe}
 
 	touch $@
@@ -42,9 +49,16 @@ r:
 ifeq ($(msbuild), $(xdotnet))
 	dotnet run -p src/async.csproj 
 else
-	mono  --debug=casts ./cs-etcd/bin/Debug/cs-etcd.exe major=marksweep-par-fixed,major-heap-size=2g
+	mono  --debug=casts ${exe} major=marksweep-par-fixed,major-heap-size=2g
 endif
 
 clean:
-	dotnet msbuild ./src/async.csproj  /t:clean
+ifeq ($(msbuild), $(xdotnet))
 	rm  -rf .build .phony_target src/obj src/bin
+	dotnet msbuild asyncdotnet.sln   /t:clean
+	dotnet msbuild asyncdotnet.sln   /r
+else
+	rm  -rf .build .phony_target src/obj src/bin
+	${msbuild} asyncdotnet-mono.sln /t:clean
+	${msbuild} asyncdotnet-mono.sln /r
+endif

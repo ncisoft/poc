@@ -40,9 +40,12 @@ t.lua
 
 .phony_target
 .build
-*/obj/*
-*/bin/*
+.realsync
+*/src/obj/*
+*/src/bin/*
 */build/*
 */.vs/*
+*/.idea/*
+*/*.DotSettings.user
 /staticblock-poc/target/
 /unity-classes/target/

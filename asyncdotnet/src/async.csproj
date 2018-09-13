@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="latency.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Foo.cs" />
     <Compile Include="utils.cs" />

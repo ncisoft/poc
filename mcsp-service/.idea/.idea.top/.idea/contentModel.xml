@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="src" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="dynamic-proxy" t="Include">
+          <e p="IProxyInvocationHandler.cs" t="Include" />
+          <e p="MetaDataFactorycs.cs" t="Include" />
+          <e p="ProxyFactorycs.cs" t="Include" />
+          <e p="SecurityManager.cs" t="Include" />
+          <e p="SecurityProxy.cs" t="Include" />
+          <e p="utils.cs" t="Include" />
+        </e>
+        <e p="Foo.cs" t="Include" />
+        <e p="main.csproj" t="IncludeRecursive" />
+        <e p="mcsp.cs" t="Include" />
+        <e p="nlog.config" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="main.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+      </e>
+      <e p="top.sln" t="IncludeFlat" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/Rider2018.1/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_top.-1682116995.00" t="ExcludeRecursive" />
+  </component>
+</project>
