@@ -42,15 +42,15 @@ void fun()
   int j;
   mem_info_t *plist = memInfoList;
   
-  set_mem_info_t(plist+0, "  const p=%p\n", &__gName);
-  set_mem_info_t(plist+1, "  fun   p=%p\n", &fun);
-  set_mem_info_t(plist+2, "  mem   p=%p\n", cp);
-  set_mem_info_t(plist+3, "  open  p=%p\n", &open);
-  set_mem_info_t(plist+4, "  stack p=%p\n", &i);
-  set_mem_info_t(plist+5, "  stack p=%p\n", &j);
+  set_mem_info_t(plist+0, "  const  p=%p\n", &__gName);
+  set_mem_info_t(plist+1, "  fun    p=%p\n", &fun);
+  set_mem_info_t(plist+2, "  mem    p=%p\n", cp);
+  set_mem_info_t(plist+3, "  open   p=%p\n", &open);
+  set_mem_info_t(plist+4, "  stack x0=%p\n", &i);
+  set_mem_info_t(plist+5, "  stack x1=%p\n", &j);
 
   qsort(memInfoList, sizeof(memInfoList)/sizeof(mem_info_t), sizeof(mem_info_t), compare_mem_info_t);
-  printf("the ordered memory layout is below\n");
+  printf("the memory layout sorted by p address is below\n");
   for (i=0; i < sizeof(memInfoList)/sizeof(mem_info_t); i++)
     printf( plist[i].fmt, plist[i].p );
 
