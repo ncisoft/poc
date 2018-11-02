@@ -1,6 +1,7 @@
 #!/usr/bin/env lua52
 
 local _xprint = require ("commons.print")
+local dump = require 'pl.pretty'.dump
 require("commons.getopt")
 local socket = require("socket")
 local char = string.char
@@ -122,17 +123,23 @@ _G.xopts =
 {
 	decl = 
 	{
-		{ 'h' , "host"    , true , "www.baidu.com", function(f)  reindex = true end } ,
-		{ 'p' , "port"    , true  , 80, function(f)  end } ,
-		{ 'f' , "facility" , true  , default_v, function(f) set_syslog_facility(f) end } ,
-		{ 'd' , "debug"    , false , default_v, function()  debug = false end } 
+		{ 'h' , "host"    , true , "www.baidu.com", function(k,v)  return v ;end } ,
+		{ 'p' , "port"    , true  , 80, function(k,v)  return k,v; end } ,
+		{ 't' , "type"    , true  , "any", function(k,v)  return k,v; end } ,
+		{ 'd' , "debug"   , false , true, function(k,v)  return k,v; end } 
 	},
-	-- options = {}
-	-- args = {} -- remaining args
+	--options = {},
+	--args = {}, -- remaining args
 	help_text = ""
 }
+local function validate_opts()
+  return true
+end
 
 xparse_opt()
+_G.xopts.decl = nil
+dump(_G.xopts)
+assert( validate_opts(), "xopts is invalid" );
 
 print("")
 SECTION("... check connect socks5 server ..\n")
