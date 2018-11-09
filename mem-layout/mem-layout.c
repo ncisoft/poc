@@ -63,6 +63,8 @@ void fun()
   printf("RLIMIT_STACK soft=%zu, hard=%zu, rlim_infinity=%zu, sizeof=%zu\n",
          (size_t)(limits.rlim_cur), (size_t)(limits.rlim_max),
          (size_t)(RLIM_INFINITY), sizeof(limits.rlim_max));
+  printf("sizeof(int)=%zu sizeof(long)=%zu, sizoef(long long)=%zu\n", sizeof(int),
+         sizeof(long),sizeof(long long));
 }
 
 int main()
