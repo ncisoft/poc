@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 
 static int __gName = 8;
-typedef struct 
+typedef struct
 {
   char *fmt;
   void *p;
@@ -41,7 +44,8 @@ void fun()
   void *cp = malloc(99);
   int j;
   mem_info_t *plist = memInfoList;
-  
+  struct rlimit limits;
+
   set_mem_info_t(plist+0, "  const  p=%p\n", &__gName);
   set_mem_info_t(plist+1, "  fun    p=%p\n", &fun);
   set_mem_info_t(plist+2, "  mem    p=%p\n", cp);
@@ -54,6 +58,11 @@ void fun()
   for (i=0; i < sizeof(memInfoList)/sizeof(mem_info_t); i++)
     printf( plist[i].fmt, plist[i].p );
 
+  getrlimit(RLIMIT_STACK, &limits);
+  printf("\n");
+  printf("RLIMIT_STACK soft=%zu, hard=%zu, rlim_infinity=%zu, sizeof=%zu\n",
+         (size_t)(limits.rlim_cur), (size_t)(limits.rlim_max),
+         (size_t)(RLIM_INFINITY), sizeof(limits.rlim_max));
 }
 
 int main()

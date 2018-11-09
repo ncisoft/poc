@@ -3,10 +3,10 @@
 build: mem-layout raii
 
 mem-layout: mem-layout.c
-	gcc -o $@ $<
+	$(CC) -o $@ -Wall -std=c99 $<
 
 raii: raii.c
-	gcc -o $@ $<
+	$(CC) -o $@ -Wall -std=c99 $<
 
 clean:
 	@true && \
