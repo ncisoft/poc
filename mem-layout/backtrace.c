@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <execinfo.h>
 #include <string.h>
 #ifndef __GNUC__
@@ -10,14 +11,25 @@
 
 void  *extract_addr(char *strack_info)
 {
-  char *cp = strchr(strack_info, '+');
+#ifndef __MACH__
+  char *cp = strchr(strack_info, '[');
   if (cp)
     {
       void *p;
-      int code = sscanf(cp, "+%p) ", &p);
+      int code = sscanf(cp, "[%p]", &p);
       if (code == 1)
         return p;
     }
+#else
+  char *hex=strstr(strack_info, "0x");
+  if (hex)
+    {
+      void *p;
+      int fc = sscanf(hex, "%p ", &p);
+      if (fc)
+        return p;
+    }
+#endif
   return NULL;
 
 }
@@ -36,6 +48,7 @@ void f()
         {
           printf("\t[%d] %p %s\n", i, extract_addr(stacktrace[i]), stacktrace[i]);
         }
+      free(stacktrace);
 
 #if 0
 
