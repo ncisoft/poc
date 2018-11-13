@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <execinfo.h>
 #include <string.h>
+#ifndef __GNUC__
+#error "GCC was required"
+#endif
+#ifndef __clang__
 #pragma GCC diagnostic ignored "-Wframe-address"
+#endif
 
 void  *extract_addr(char *strack_info)
 {
