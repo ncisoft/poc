@@ -46,7 +46,7 @@ void f()
       char ** stacktrace = backtrace_symbols(array, stack_num);
       for (int i = 0; i < stack_num; ++i)
         {
-          printf("\t[%d] %p %s\n", i, extract_addr(stacktrace[i]), stacktrace[i]);
+          printf("\t[%d] %p \t %s\n", i, extract_addr(stacktrace[i]), stacktrace[i]);
         }
       free(stacktrace);
 
