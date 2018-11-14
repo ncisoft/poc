@@ -11,7 +11,7 @@
 
 void  *extract_addr(char *strack_info)
 {
-#ifndef __MACH__
+#ifdef __linux__
   char *cp = strchr(strack_info, '[');
   if (cp)
     {
@@ -20,7 +20,7 @@ void  *extract_addr(char *strack_info)
       if (code == 1)
         return p;
     }
-#else
+#elif defined(__MACH__)
   char *hex=strstr(strack_info, "0x");
   if (hex)
     {
@@ -50,9 +50,9 @@ void f()
         }
       free(stacktrace);
 
-#if 0
 
   printf("[0]=%p, [1] =  %p\n" , __builtin_frame_address(0), __builtin_frame_address(1));
+#if 0
   ip = __builtin_return_address (3);
   printf("--%p\n", ip);
   for (unsigned int i=2; i <=1; i++)
@@ -70,8 +70,18 @@ void g()
 {
   f();
 }
+
+typedef struct
+{
+  int id;
+  int age;
+  int money;
+} foo_t;
+
 int main()
 {
+  foo_t foo = { .id=9, .money=8 };
   printf("main=%p g=%p f=%p\n", main, g, f);
+  printf("foo.id=%d\n", foo.age);
   g();
 }
