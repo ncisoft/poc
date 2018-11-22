@@ -9,7 +9,7 @@ raii: raii.c
 	$(CC) -o $@ -Wall -std=c99 $<
 
 backtrace: backtrace.c
-	$(CC) -o $@ -Wall -std=c99 $<
+	$(CC) -o $@ -Wall -std=c99 -rdynamic $<
 
 clean:
 	@true && \

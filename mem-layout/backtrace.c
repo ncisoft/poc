@@ -12,23 +12,36 @@
 void  *extract_addr(char *strack_info)
 {
 #ifdef __linux__
-  char *cp = strchr(strack_info, '[');
-  if (cp)
+  char *cp_addr = strchr(strack_info, '[');
+  char *cp_offset = strchr(strack_info, '+');
+  if (cp_addr && cp_offset)
     {
       void *p;
-      int code = sscanf(cp, "[%p]", &p);
-      if (code == 1)
-        return p;
+      int offset;
+      int rcode = sscanf(cp_addr, "[%p]", &p);
+      int rcode2 = sscanf(cp_offset, "+%x)", &offset);
+      if (rcode == 1 && rcode2 == 1)
+        {
+          return p - offset;
+        }
     }
-#elif defined(__MACH__)
-  char *hex=strstr(strack_info, "0x");
-  if (hex)
+#elif defined(__APPLE__)
+  char *cp_addr=strstr(strack_info, "0x");
+  char *cp_offset=strstr(strack_info, "+ ");
+
+  if (cp_addr && cp_offset)
     {
       void *p;
-      int fc = sscanf(hex, "%p ", &p);
-      if (fc)
-        return p;
+      int offset;
+      int rcode = sscanf(cp_addr, "%p ", &p);
+      int rcode2 = sscanf(cp_offset, "+ %d", &offset);
+
+      printf("p=%p, offset=%d\n", p, offset);
+      if (rcode == 1 && rcode2 == 1)
+        return p - offset;
     }
+#else
+#error "unsupported platform"
 #endif
   return NULL;
 
@@ -78,10 +91,35 @@ typedef struct
   int money;
 } foo_t;
 
+void *extract_caller_func_addr(int iLevel)
+{
+  void *ip_out = NULL;
+  void * array[8];
+  int size = sizeof(array)/sizeof(void *);
+  int stack_num = backtrace(array, size);
+  char ** stacktrace = backtrace_symbols(array, stack_num);
+  for (int i = iLevel; i < stack_num; ++i)
+    {
+      printf("\t[%d] %p \t %s\n", i, extract_addr(stacktrace[i]), stacktrace[i]);
+    }
+  if (iLevel < stack_num)
+    {
+      ip_out =  extract_addr(stacktrace[iLevel]);
+    }
+  free(stacktrace);
+
+
+
+  printf("__builtin_return_address[0]=%p\n" , __builtin_return_address(0));
+  return ip_out;;
+}
+
 int main()
 {
   foo_t foo = { .id=9, .money=8 };
   printf("main=%p g=%p f=%p\n", main, g, f);
   printf("foo.id=%d\n", foo.age);
-  g();
+  //g();
+  void *ip=extract_caller_func_addr(1);
+  printf("main=%p, extract_caller_func_addr(1)=%p, is_equals=%s\n", main, ip, (ip == &main) ? "true" : "false");
 }
