@@ -15,12 +15,12 @@ let g:ctrlp_custom_ignore = {
 " rm -rf ~/.cache/ctrlp/
 
 "http://harttle.com/2015/11/17/vim-buffer.html
-set wildmenu wildmode=full 
+set wildmenu wildmode=full
 set wildchar=<Tab> wildcharm=<C-Z>
 
 " http://timothyqiu.com/archives/using-clang-complete-for-c-cplusplus-in-vim/
-let g:clang_c_options = ' -std=c99 -I/usr/include/lua5.1/ -I$PWD/include/ '  
-let g:clang_cpp_options = ' -std=c++11 -stdlib=libc++  -I$PWD/include/ -I/usr/local/include/ -I/usr/include -I/usr/include/c++/4.9 -I/usr/include/i386-linux-gnu/c++/4.9 ' 
+let g:clang_c_options = ' -std=c99 -I/usr/include/lua5.1/ -I$PWD/include/ '
+let g:clang_cpp_options = ' -std=c++11 -stdlib=libc++  -I$PWD/include/ -I/usr/local/include/ -I/usr/include -I/usr/include/c++/4.9 -I/usr/include/i386-linux-gnu/c++/4.9 '
         let g:clang_compilation_database = './build'
         let g:clang_cpp_completeopt = 'longest,menuone,preview'
 "        let g:clang_include_sysheaders = 1
@@ -33,7 +33,7 @@ let g:syntastic_cpp_compiler_options = " -std=c++11 -stdlib=libc++ "
 let g:syntastic_cpp_include_dirs=['-I$PWD/include/', '-I /usr/include',  '-I/usr/local/include/', '-I/usr/include/c++/4.9', '-I/usr/include/i386-linux-gnu/c++/4.9' ]
 
 let g:syntastic_c_compiler="c"
-let g:syntastic_c_compiler_options = " -std=c99  "
+let g:syntastic_c_compiler_options = " -std=gnu99  "
 let g:syntastic_c_include_dirs=['-I$PWD/include/', '-I/usr/include/lua5.1', '-I./contrib/lua51-ext/']
 
 " https://superuser.com/questions/77800/vims-autocomplete-how-to-prevent-vim-to-read-some-include-files
@@ -55,3 +55,30 @@ nmap <leader>tr :CtrlPClearCache<CR>
 nmap <leader>tm :LeaderfFunction<CR>
 
 autocmd BufNewFile,BufRead nlog.config   set syntax=html
+
+let g:ale_c_clang_executable = 'clang'
+let g:ale_cpp_clang_executable = 'clang'
+let g:ale_linters = {
+      \   'cpp': ['clangtidy'],
+      \   'c': ['clangtidy'],
+      \}
+let g:ale_fixers={
+      \   'cpp': ['clang-format'],
+      \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \}
+
+let g:ale_c_incs = [
+      \ '.',
+      \ g:git_dir,
+      \ g:git_dir . '/src/',
+      \ g:git_dir . '/include/',
+      \ g:git_dir . '/utils/',
+      \ g:git_dir . '/.xopt/include',
+      \ '.xopt/include',
+      \ 'contrib/lua51-ext',
+      \ '/usr/include/lua5.1'
+      \]
+call SetupC99Incs()
+let g:ale_c_clangtidy_options = " -- " . g:ale_c_clang_options
+let g:ale_cpp_clangtidy_options = " -- " . g:ale_cpp_clang_options
+

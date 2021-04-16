@@ -1,0 +1,38 @@
+import os
+import sys
+
+home_dir = os.environ['HOME']
+env = Environment(CCFLAGS=['-g', '-std=gnu99', '-Wall', '-Wno-unused-label', '-O2', \
+                           '-I./',                                                \
+                           ])
+
+def CheckPKGConfig(context, version):
+    context.Message( 'Checking for pkg-config... ' )
+    ret = context.TryAction('pkg-config --atleast-pkgconfig-version=%s' % version)[0]
+    context.Result( ret )
+    return ret
+
+def CheckPKG(context, name):
+    context.Message( 'Checking for %s... ' % name )
+    ret = context.TryAction('pkg-config --exists \'%s\'' % name)[0]
+    context.Result( ret )
+    return ret
+
+conf = Configure(env, custom_tests = { 'CheckPKGConfig' : CheckPKGConfig,
+                                      'CheckPKG' : CheckPKG })
+
+#if not conf.CheckPKG('gtk+-2.0 >= 2.4.9'):
+pkg_deps = ['check', 'hiredis', ]
+
+for pkg in pkg_deps:
+    if not conf.CheckPKG(pkg):
+        print '%s not found.' % pkg
+        Exit(1)
+
+for pkg in pkg_deps:
+    env.ParseConfig('pkg-config --cflags --libs %s' % pkg)
+
+lib_logger = File('libs/liblogger.a')
+env.Program(target='./build/t.out', source=[ './nested_function.c', 'logger.h' ],
+             LIBS=[lib_logger]
+            )
