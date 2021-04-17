@@ -1,0 +1,4 @@
+Import("env")
+
+env.lib_logger=env.StaticLibrary('logger', ['logger.c'])
+#Return(logger_lib)

@@ -3,9 +3,12 @@ import sys
 import SCons
 
 home_dir = os.environ['HOME']
-env = Environment(CCFLAGS=['-g', '-std=gnu99', '-Wall', '-Wno-unused-label', '-O2', \
-                           '-I./',                                                \
+env = Environment(BUILDROOT="build",
+                  CCFLAGS=['-g', '-std=gnu99',  '-O2', '-Wall',           \
+                           '-Wno-format-truncation', '-Wno-unused-label', \
+                           '-I./',                                        \
                            ])
+env.Decider('timestamp-newer')
 
 def CheckPKGConfig(context, version):
     context.Message( 'Checking for pkg-config... ' )
@@ -27,14 +30,14 @@ pkg_deps = ['check', 'hiredis', ]
 
 for pkg in pkg_deps:
     if not conf.CheckPKG(pkg):
-        print '%s not found.' % pkg
+        print( '%s not found.' % pkg)
         Exit(1)
 
 for pkg in pkg_deps:
     env.ParseConfig('pkg-config --cflags --libs %s' % pkg)
 
-Export("env")
-lib_logger = File('libs/liblogger.a')
-env.Program(target='./build/t.out', source=[ './nested_function.c', 'logger.h' ],
-             LIBS=[lib_logger]
-            )
+env.top_dir = os.getcwd()
+env.ParseConfig('echo  -I%s/logger ' % env.top_dir)
+#env.lib_logger = File('./logger/.libs/liblogger.a')
+for module in ['logger', 'src']:
+    env.SConscript("%s/SConscript" % module, {'env': env})

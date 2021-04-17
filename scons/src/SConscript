@@ -1,0 +1,6 @@
+Import("env")
+
+env.Program(target=env.top_dir+'/build/t.out', source=[ './t.c' ],
+             LIBS=[env.lib_logger]
+            )
+#Return(logger_lib)
