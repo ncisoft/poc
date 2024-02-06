@@ -3,4 +3,7 @@ Import("env")
 env.Program(target=env.top_dir+'/build/t.out', source=[ './t.c' ],
              LIBS=[env.lib_logger]
             )
+env.Program(target=env.top_dir+'/build/ldns.out', source=[ './ldns.c' ],
+             LIBS=[env.lib_logger, 'ldns']
+            )
 #Return(logger_lib)

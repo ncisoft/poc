@@ -4,8 +4,9 @@ import SCons
 
 home_dir = os.environ['HOME']
 env = Environment(BUILDROOT="build",
-                  CCFLAGS=['-g', '-std=gnu99',  '-O2', '-Wall',           \
+                  CCFLAGS=['-g', '-std=gnu99', '-O2', '-Wall',            \
                            '-Wno-format-truncation', '-Wno-unused-label', \
+                           '-Wno-unused-but-set-variable',                \
                            '-I./',                                        \
                            ])
 env.Decider('timestamp-newer')
@@ -26,7 +27,7 @@ conf = Configure(env, custom_tests = { 'CheckPKGConfig' : CheckPKGConfig,
                                       'CheckPKG' : CheckPKG })
 
 #if not conf.CheckPKG('gtk+-2.0 >= 2.4.9'):
-pkg_deps = ['check', 'hiredis', ]
+pkg_deps = ['check', 'hiredis', 'libldns']
 
 for pkg in pkg_deps:
     if not conf.CheckPKG(pkg):
@@ -34,6 +35,8 @@ for pkg in pkg_deps:
         Exit(1)
 
 for pkg in pkg_deps:
+    d = env.ParseFlags('!pkg-config --cflags --libs %s' % pkg)
+    env.MergeFlags(d)
     env.ParseConfig('pkg-config --cflags --libs %s' % pkg)
 
 env.top_dir = os.getcwd()

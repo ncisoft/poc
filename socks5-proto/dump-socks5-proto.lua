@@ -1,4 +1,4 @@
-#!/usr/bin/env lua52
+#!/usr/bin/env lua
 
 local _xprint = require ("commons.print")
 local dump = require 'pl.pretty'.dump
@@ -31,7 +31,11 @@ local CONN_ERRORS = {
 local s = socket.tcp()
 local function init_socks5_server()
   s = socket.tcp()
-  assert(s:connect("127.0.0.1", 1080), "connect fail")
+  socks5_host = "192.168.1.8"
+  socks5_port = 10832
+
+  assert(s:connect(socks5_host, socks5_port), "connect fail")
+  xprint("... socks5 server=%s:%d\n", socks5_host, socks5_port)
   -- step(1): init authentification
   local auth_req = char(SOCKS5, NUMBER_OF_AUTH_METHODS, NO_AUTHENTICATION)
   s:send(auth_req)
@@ -43,6 +47,12 @@ local function init_socks5_server()
   end
   dump_hex_inline("[s00]ack_auth ", auth_response)
 end
+
+local function sprint(fmt, ...)
+  local line=_G.sprint(fmt, ...)
+  print(line)
+end
+
 
 local function connect_hostname(host)
   local host_length = #host
@@ -60,6 +70,9 @@ local function connect_hostname(host)
     assert(nil, message)
   end
   dump_hex_inline("[s00]conn_ack ", conn_response)
+  local ver = conn_response:byte(1)
+  local rep = conn_response:byte(3)
+  sprint("[s00]conn_ack : %s ver = 0x%02x connect_rep = %s", " ", ver, rep == 0x0)
   -- pop address
   local addr_type = s:receive(1)
   dump_hex_inline("[s00]addr_type", addr_type)
@@ -119,14 +132,14 @@ local function connect_ipv4(ip)
 
 end
 
-_G.xopts = 
+_G.xopts =
 {
-	decl = 
+	decl =
 	{
 		{ 'h' , "host"    , true , "www.baidu.com", function(k,v)  return v ;end } ,
 		{ 'p' , "port"    , true  , 80, function(k,v)  return k,v; end } ,
 		{ 't' , "type"    , true  , "any", function(k,v)  return k,v; end } ,
-		{ 'd' , "debug"   , false , true, function(k,v)  return k,v; end } 
+		{ 'd' , "debug"   , false , true, function(k,v)  return k,v; end }
 	},
 	--options = {},
 	--args = {}, -- remaining args
@@ -146,7 +159,11 @@ SECTION("... check connect socks5 server ..\n")
 init_socks5_server()
 print("")
 SECTION("... check connect hostname via socks5 server ..\n")
-connect_hostname("www.baidu.com")
+connect_hostname("[2001:da8:20d:7042::f2]")
+
+print("")
+SECTION("... done ...\n")
+os.exit(0)
 
 print("")
 s:close()

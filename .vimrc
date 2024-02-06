@@ -3,8 +3,8 @@ let g:EasyGrepFilesToExclude=".git,build,tags,*.bak,*.o,*.s,*.exe"
 let g:EasyGrepRoot = "search:.git"
 set wildignore=*.swp,.gitignore
 "https://gist.github.com/seyDoggy/613f2648cebc6c7b456f
-unlet g:ctrlp_custom_ignore
-unlet g:ctrlp_user_command
+"unlet g:ctrlp_custom_ignore
+"unlet g:ctrlp_user_command
 " set your own custom ignore settings
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,tags
 let g:ctrlp_custom_ignore = {
@@ -50,7 +50,6 @@ let g:diminactive_use_colorcolumn = 0
 let g:ctrlp_clear_cache_on_exit = 1
 let g:tagbar_ctags_bin = "ctags"
 
-source ~/conf/vim/.coding.style.vimrc
 nmap <leader>tr :CtrlPClearCache<CR>
 nmap <leader>tm :LeaderfFunction<CR>
 
@@ -79,6 +78,4 @@ let g:ale_c_incs = [
       \ '/usr/include/lua5.1'
       \]
 call SetupC99Incs()
-let g:ale_c_clangtidy_options = " -- " . g:ale_c_clang_options
-let g:ale_cpp_clangtidy_options = " -- " . g:ale_cpp_clang_options
 
