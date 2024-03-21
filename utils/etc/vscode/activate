@@ -85,6 +85,9 @@ export http_proxy=http://192.168.1.4:10804
 PATH="$JAVA_PATH:$PATH"
 export PATH
 
+VIRTUAL_ENV="/home/leeyg/.app/py3-venv"
+export VIRTUAL_ENV
+
 # unset PYTHONHOME if set
 # this will fail if PYTHONHOME is set to the empty string (which is bad anyway)
 # could use `if (set -u; : $PYTHONHOME) ;` in bash
@@ -96,7 +99,7 @@ fi
 if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT:-}" ] ; then
     _OLD_VIRTUAL_PS1="${PS1:-}"
     if [ "x(vscode) " != x ] ; then
-	PS1="(vscode-${JAVA_MAJOR_VERSION}) ${PS1:-}"
+	PS1="(vscode-pyenv-${JAVA_MAJOR_VERSION}) ${PS1:-}"
     else
     if [ "`basename \"$VIRTUAL_ENV\"`" = "__" ] ; then
         # special case for Aspen magic directories

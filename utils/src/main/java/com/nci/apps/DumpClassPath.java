@@ -20,6 +20,5 @@ public class DumpClassPath {
         System.out.println();
 
         System.out.println("----");
-         
     }
 }
