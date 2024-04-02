@@ -2,17 +2,17 @@ package com.nci.utils;
 
 import java.lang.ref.WeakReference;
 
-import com.nci.utils.pojo.StackTraceElementPOJO;
+import com.nci.utils.pojo.StackTraceElementBean;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class GCChecker {
     private WeakReference<GCOwer> rf = new WeakReference<>(new GCOwer());
-    private StackTraceElementPOJO mCallerLocation;
+    private StackTraceElementBean mCallerLocation;
 
     public GCChecker() {
-        StackTraceElementPOJO stackElement = Helper.getCallerStackTraceElement(2);
+        StackTraceElementBean stackElement = Helper.getCallerStackTraceElement(2);
         Helper.dump_var("GCChecker", stackElement);
         Helper.nop(stackElement);
         Helper.println("---------");
@@ -22,7 +22,7 @@ public class GCChecker {
 
     private class GCOwer {
 
-        StackTraceElementPOJO stackElement = Helper.getCallerStackTraceElement(2);
+        StackTraceElementBean stackElement = Helper.getCallerStackTraceElement(2);
 
         @Override
         protected void finalize() throws Throwable {

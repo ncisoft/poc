@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import org.apache.tools.ant.util.StringUtils;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import oshi.SystemInfo;
@@ -34,20 +36,10 @@ public class IdentifyJvmArgs {
     }
 
     private static List<String> elimateEmptyString(List<String> list) {
-        Stack<Integer> indexStack = new Stack<Integer>();
-        list = new ArrayList<String>(list);
 
-        for (int i=0; i<list.size(); i++) {
-            String e = list.get(i);
-            if (e == null || e.length() == 0) {
-                indexStack.push(i);
-                logger.trace("found empty element: {}", i);
-            }
-        }
-        while (!indexStack.empty()) {
-            Integer index = indexStack.pop();
-            list.remove(index.intValue());
-        }
+        list = list.stream()
+                .filter(s -> s instanceof String && s.length() > 0)
+                .collect(Collectors.toList());
         return list;
     }
 
@@ -79,7 +71,7 @@ public class IdentifyJvmArgs {
         }
         else {
             // JVM >= 1.9, prefer G1Gc
-            jvmArgsList = Arrays.asList(
+            jvmArgsList = Arrays.asList(null,
                     "-server",
                     "-Xms1024m",
                     "-Xmx1024m",

@@ -55,10 +55,11 @@ export VIRTUAL_ENV
 _OLD_VIRTUAL_PATH="$PATH"
 
 
-JAVA_MAJOR_VERSION=17
+JAVA_MAJOR_VERSION=11
 
 export JAVA8_HOME=/opt/jdk8u352-b08
 export JAVA11_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export JAVA11_HOME=/opt/jdk-11.0.22+7-linux-x64
 export JAVA17_HOME=/opt/jdk-17.0.5+8
 
 case $JAVA_MAJOR_VERSION in

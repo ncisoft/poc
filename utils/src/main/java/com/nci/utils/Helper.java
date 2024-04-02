@@ -7,7 +7,7 @@ import java.util.Stack;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nci.utils.pojo.StackTraceElementPOJO;
+import com.nci.utils.pojo.StackTraceElementBean;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,24 +46,24 @@ public class Helper {
         System.out.println("");
     }
 
-    public static StackTraceElementPOJO getCallerStackTraceElement() {
+    public static StackTraceElementBean getCallerStackTraceElement() {
         return getCallerStackTraceElement(1);
     }
 
-    public static StackTraceElementPOJO getCallerStackTraceElement(int level) {
+    public static StackTraceElementBean getCallerStackTraceElement(int level) {
         RuntimeException ex = new RuntimeException();
         StackTraceElement[] stackElements = ex.getStackTrace();
         StackTraceElement _callerStackTraceElement = stackElements[level];
-        StackTraceElementPOJO callerStackTraceElement = StackTraceElementPOJO.transform(_callerStackTraceElement);
+        StackTraceElementBean callerStackTraceElement = StackTraceElementBean.transform(_callerStackTraceElement);
 //        Helper.dump_var("call stack element", callerStackTraceElement);
 
         return callerStackTraceElement;
     }
 
-    public static StackTraceElementPOJO[] getCallerStackTraceElementList() {
+    public static StackTraceElementBean[] getCallerStackTraceElementList() {
         RuntimeException ex = new RuntimeException();
         StackTraceElement[] _stackElements = ex.getStackTrace();
-        StackTraceElementPOJO[] stackElements = StackTraceElementPOJO.transform(_stackElements);
+        StackTraceElementBean[] stackElements = StackTraceElementBean.transform(_stackElements);
 
         return stackElements;
     }
@@ -91,7 +91,7 @@ public class Helper {
                 .setPrettyPrinting()
                 .create();
         String jsonContent = gson.toJson(o);
-        StackTraceElementPOJO callerStack = getCallerStackTraceElement(2);
+        StackTraceElementBean callerStack = getCallerStackTraceElement(2);
         log.debug("{} dump obj {} <{}>", callerStack.toLogInfo(), tag, o.getClass().getCanonicalName());
         System.out.printf("%s\n", jsonContent);
     }

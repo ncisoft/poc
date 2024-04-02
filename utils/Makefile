@@ -3,7 +3,8 @@
 git-dir := $(shell git rev-parse --show-toplevel | tr -d '\n')
 JAVA_OPTS_INTERPRETED_MODE = -Xint #interpreted mode
 JAVA_OPTS = -XX:+TieredCompilation -XX:TieredStopAtLevel=1
-JAVA_OPTS = -Xint  -Xshare:on
+JAVA_OPTS = -Xint  -Xshare:on -Xms256m -Xmx256m
+JAVA_OPTS =  -Xms256m -Xmx256m
 
 help:
 	@echo "make [ build | classpath | touch | app | helloworld | clean | jmh | vmargs | jdkflags"
@@ -39,11 +40,13 @@ HelloWorld: build
 
 .PHONY: app
 app: build
-	@echo "................"
-	@time java $(JAVA_OPTS) -cp $(shell cat cp.txt) com.nci.apps.App
+	@echo '................ mvn exec:java -Dexec.mainClass="com.nci.apps.App" -Dexec.cleanupDaemonThreads=false'
+	@echo '>>> ................ drip ..............................' | ~/conf/bash/hl_words.lua java drip END
+	@time drip $(JAVA_OPTS) -cp $(shell cat cp.txt) com.nci.apps.App
+	@echo '>>> ................ END ..............................' | ~/conf/bash/hl_words.lua java drip END
 
 .PHONY: classpath
-classpath:
+classpath: build
 	@mvn exec:exec -Dexec.executable=echo -Dexec.args="%classpath"
 
 .PHONY: vmargs
