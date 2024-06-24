@@ -16,20 +16,21 @@
 
 <dependencies>
     <dependency>
+        <groupId>javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.10.0.GA</version>
+    </dependency>
+
+    <dependency>
         <groupId>com.esotericsoftware</groupId>
         <artifactId>kryo</artifactId>
         <version>5.3.0</version>
     </dependency>
     <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.24</version>
-        <scope>provided</scope> 
-    </dependency>
-    <dependency>
-        <groupId>org.projectlombok.test</groupId>
-        <artifactId>test-maven-lombok</artifactId>
-        <version>1.18.20.0</version>
+	    <groupId>org.projectlombok</groupId>
+	    <artifactId>lombok</artifactId>
+	    <version>${lombok.version}</version>
+	    <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>junit</groupId>
@@ -37,6 +38,13 @@
         <version>4.13.1</version>
         <scope>test</scope>
     </dependency>
+
+<!-- https://mvnrepository.com/artifact/org.fusesource.jansi/jansi -->
+<dependency>
+    <groupId>org.fusesource.jansi</groupId>
+    <artifactId>jansi</artifactId>
+    <version>2.4.0</version>
+</dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -78,16 +86,21 @@
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
           </dependency>
+        <dependency>
+            <groupId>org.openjdk.jol</groupId>
+            <artifactId>jol-core</artifactId>
+            <version>0.17</version>
+        </dependency>
     </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmh.version>1.36</jmh.version>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-        <javac.target>1.9</javac.target>
-        <javacc.target>1.9</javacc.target>
-        <lombok.version>1.18.24</lombok.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <javac.target>1.8</javac.target>
+        <javacc.target>1.8</javacc.target>
+        <lombok.version>1.18.30</lombok.version>
         <handlebars-version>4.3.1</handlebars-version>
         <uberjar.name>javautils</uberjar.name>
         <guava-version>33.0.0-jre</guava-version>
@@ -95,25 +108,30 @@
 
     <build>
         <plugins>
+		<plugin>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok-maven-plugin</artifactId>
+			<version>1.18.20.0</version>
+			<executions>
+				<execution>
+					<phase>generate-sources</phase>
+					<goals>
+						<goal>delombok</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.0</version>
                 <configuration>
+                <fork>true</fork>
                     <compilerVersion>${javac.target}</compilerVersion>
                     <source>${javac.target}</source>
                     <target>${javac.target}</target>
-                    <compilerArgs>
-                        <arg>-Xlint:unchecked</arg>
-                        <arg>-Xlint:deprecation</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
+		    <encoding>UTF-8</encoding>
+
                 </configuration>
             </plugin>
             <plugin>

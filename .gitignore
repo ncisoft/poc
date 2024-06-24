@@ -49,3 +49,4 @@ t.lua
 */*.DotSettings.user
 /staticblock-poc/target/
 /unity-classes/target/
+.AppleDouble/*

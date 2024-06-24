@@ -1,4 +1,4 @@
-# This file must be used with "source bin/activate" *from bash*
+ #This file must be used with "source bin/activate" *from bash*
 # you cannot run it directly
 
 deactivate () {
@@ -55,12 +55,25 @@ export VIRTUAL_ENV
 _OLD_VIRTUAL_PATH="$PATH"
 
 
-JAVA_MAJOR_VERSION=11
+# set filetype=bash
+OPT=/opt
+if [ -d "/nas/lmde/opt" ]; then
+	OPT=/storage/zfs/home/opt
+elif [ -d "/host/3700x/opt" ]; then
+	OPT=/host/3700x/opt
+else
+	OPT=/opt
+fi
+printf "%-10s = %s\\n" "OPT" "$OPT"
 
-export JAVA8_HOME=/opt/jdk8u352-b08
-export JAVA11_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-export JAVA11_HOME=/opt/jdk-11.0.22+7-linux-x64
-export JAVA17_HOME=/opt/jdk-17.0.5+8
+
+JAVA_MAJOR_VERSION=azul-17
+JAVA_MAJOR_VERSION=17
+
+export JAVA8_HOME=$OPT/jdk8u352-b08
+export JAVA11_HOME=$OPT/jdk-11.0.22+7-linux-x64
+export JAVA17_HOME=$OPT/jdk-17.0.5+8
+export AZUL17_HOME=$OPT/zulu17.50.19-ca-jdk17.0.11-linux_x64
 
 case $JAVA_MAJOR_VERSION in
   8)
@@ -69,10 +82,13 @@ case $JAVA_MAJOR_VERSION in
     export JAVA_HOME="${JAVA11_HOME}";;
   17)
     export JAVA_HOME="${JAVA17_HOME}";;
+  azul-17)
+    export JAVA_HOME="${AZUL17_HOME}";;
   *)
     export JAVA_HOME="${JAVA17_HOME}";;
 esac
 
+printf "%-10s = %s\\n" "JAVA_HOME" "$JAVA_HOME"
 
 #export JAVA_HOME=$JAVA17_HOME
 export JRE_HOME=$JAVA_HOME/jre
@@ -80,8 +96,8 @@ export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/lib:$CLASSPATH
 export MAVEN=/opt/apache-maven-3.8.6
 export OLDPATH=$PATH
 export JAVA_PATH=$JAVA_HOME/bin:$MAVEN/bin:$JAVA_HOME/bin
-export https_proxy=http://192.168.1.4:10804
-export http_proxy=http://192.168.1.4:10804
+export https_proxy=http://192.168.1.9:10801
+export http_proxy=http://192.168.1.9:10801
 
 PATH="$JAVA_PATH:$PATH"
 export PATH
@@ -100,7 +116,7 @@ fi
 if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT:-}" ] ; then
     _OLD_VIRTUAL_PS1="${PS1:-}"
     if [ "x(vscode) " != x ] ; then
-	PS1="(vscode-pyenv-${JAVA_MAJOR_VERSION}) ${PS1:-}"
+	PS1="(vscode-openjdk-${JAVA_MAJOR_VERSION}) ${PS1:-}"
     else
     if [ "`basename \"$VIRTUAL_ENV\"`" = "__" ] ; then
         # special case for Aspen magic directories
